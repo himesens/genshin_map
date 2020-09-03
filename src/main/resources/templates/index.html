@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>地图测试</title>
+	<meta charset="utf-8">
+	<link rel="stylesheet" href="css/leaflet.css"/>
+	<script type="text/javascript" src="js/leaflet.js"></script>
+	<script type="text/javascript" src="js/jquery-1.10.2.min.js"></script>
+	<style type="text/css">
+		html,body,div,span,table{
+			margin:0;
+			padding: 0;
+		}
+		html,body{
+			height: 100%;
+			background: #333;
+		}
+		body{
+			padding: 0 10px;
+			padding-bottom: 10px;
+		}
+		#mapid{
+			height: calc(100% - 120px);
+		}
+		.header{
+			height: 80px;
+			padding: 20px;
+		}
+		.title{
+			font-size:48px;
+			font-weight: bold;
+			font-family: Arial;
+			color:white;
+			height: 80px;
+		}
+		.title img{
+			height:80px;
+		}
+		.title span{
+			display: inline-block;
+			height: 80px;
+			line-height: 80px;
+			vertical-align: top;
+		}
+	</style>
+</head>
+<body>
+	<div class="header">
+		<div class="title">
+			<img src="images/title.png">
+			<span>World Map</span>
+		</div>
+	</div>
+	<div id="mapid"></div>
+	<script type="text/javascript">
+		var mymap = L.map("mapid").setView([50,0],3);
+
+		var windIcon = L.icon({
+			iconUrl: 'images/icons/marker_wind.png',
+			iconSize: [28, 28], // size of the icon
+			iconAnchor: [14, 28]  // the point icon put
+		});
+		var earthIcon = L.icon({
+			iconUrl: 'images/icons/marker_earth.png',
+			iconSize: [28, 28], // size of the icon
+			iconAnchor: [14, 28]  // the point icon put
+		});
+
+		L.tileLayer('images/{z}/map_{y}_{x}.webp', {
+		    attribution: '',
+		    minZoom: 2,
+            maxZoom: 5,
+            noWrap:true,
+		    crs: L.CRS.Simple
+		}).addTo(mymap);
+
+		//var wind1 = L.marker([50.5,30.5],{icon:aIcon}).addTo(mymap);
+		var wind1 = L.marker([50.5,30.5],{icon:windIcon}).bindPopup("风神忽悠着你");
+		//var wind2 = L.marker([47.5,28.5],{icon:windIcon}).bindPopup("风神忽悠着你");
+		//var wind3 = L.marker([48.5,35.5],{icon:windIcon}).bindPopup("风神忽悠着你");
+
+		var earth1 = L.marker([20.5,50.5],{icon:earthIcon}).bindPopup("啊啊啊啊");
+		var earth2 = L.marker([25.0,48.5],{icon:earthIcon}).bindPopup("啊啊啊啊");
+
+		var winds = L.layerGroup([wind1]);
+		var earths = L.layerGroup([earth1,earth2]);
+
+		winds.addTo(mymap);
+		earths.addTo(mymap);
+
+		var windlayer = {
+			
+		}
+		var earthlayer = {
+			"Earth":earths,
+			"Winds":winds
+		}
+		L.control.layers(windlayer,earthlayer).addTo(mymap);
+
+
+		mymap.on('click',function(e){
+			console.log(e.latlng);
+		});
+
+		
+	</script>
+</body>
+</html>
