@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>旅行者登录</title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" type="text/css" href="css/genshin_map.css"/>
+    <script type="text/javascript" src="js/jquery-1.10.2.min.js"></script>
+	<script type="text/javascript" src="js/jquery.cookie.js"></script>
+	<style>
+	html,body,div,input,a{
+		padding:0;
+		margin:0;
+	}
+	body{
+		background:url("images/bg5.jpg") no-repeat;	
+	}
+	</style>
+  </head>
+  <body>
+	<div class="msgblock">
+		退出登录成功，<span id="countnum">3</span>秒后即将跳转页面...
+	</div>
+	<script type="text/javascript">
+		$(document).ready(function(){
+			$.removeCookie("usercode");
+			$.removeCookie("password");
+			$.removeCookie("status");
+			
+			var i = 2;
+			var timer = setInterval(function(){
+				$("#countnum").html(i);
+				i--;
+				if(i<0){
+					clearInterval(timer);
+					location.href="/index";
+				}
+			},1000);
+		});
+	
+	</script>
+  </body>
+</html>

@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>register</title>
+    <meta charset="utf-8">
+    <!--<link rel="icon" href="FPI.ico" type="image/x-icon" />-->
+    <link rel="stylesheet" type="text/css" href="css/genshin_map.css"/>
+    <script type="text/javascript" src="js/jquery-1.10.2.min.js"></script>
+	<style>
+	body{
+		background:url("images/bg5.jpg") no-repeat;	
+	}
+	</style>
+  </head>
+  <body>
+	<div class="loginblock">
+		<div class="logincontent">
+			<div class="loginline">
+				<input type="text" id="usercode" AUTOCOMPLETE="off" placeholder="请输入用户名..." name="myusername"> 
+			</div>
+			<div class="loginline">
+				<input type="text" id="username" AUTOCOMPLETE="off" placeholder="请输入昵称..." class="text_input">
+			</div>
+			<div class="loginline">
+				<input type="password" id="password" AUTOCOMPLETE="off" placeholder="请输入密码..." name="mypassword" class="text_input">
+			</div>
+			<div class="loginline">
+				<input type="password" id="repeatpwd" AUTOCOMPLETE="off" placeholder="请重复密码..." class="text_input">
+			</div>
+			<div class="loginline">
+				<input type="text" id="mail" AUTOCOMPLETE="off" placeholder="请输入绑定邮箱..." class="text_input">
+			</div>
+			<div class="loginline">
+				<input type="text" placeholder="请输入验证码..." class="checkinput" id="checkinput"><img id="imgcheck" src="">
+			</div>
+			<div class="loginline">
+				<input id="submit" type="submit" value="注册" class="btn_login">
+			</div>
+			<div class="loginbottom">
+				<a class="regi" href="/login_p">返回</a>
+			</div>
+		</div>
+	</div>
+  	<script>
+  		var checknum;
+		$(document).ready(function(){
+			getCheckImg();
+		});
+		$("#imgcheck").click(function(){
+			getCheckImg();
+		});
+		
+		function getCheckImg(){
+			$.ajax({
+			   type: 'POST',
+			   url: "/api/getcheckimage",
+			   data:"",
+			   async :false,
+			   dataType:'json',
+			   success: function(result){
+			  	 $("#imgcheck").attr("src",result.img);
+			  	 checknum = result.num;
+			   }
+			})
+		}
+		//校验用户名是否存在
+		$("#usercode").change(function(){
+			var usercode = $(this).val();
+			$.ajax({
+			  type: 'POST',
+			  url: '/api/checkusercode',
+			  data:'usercode='+usercode,
+			  async :false,
+			  success: function(result){
+			  	if(result==true){
+			  		alert("该用户名已被占用")
+			  		$("#usercode").val("");
+			  	}
+			  }
+			});
+		});
+		
+		$("#submit").click(function(){
+			var usercode = $("#usercode").val();
+			var username = $("#username").val();
+			if(usercode==""||username==""){
+				alert("请填写完整的用户信息");
+				return;
+			}
+			var password = $("#password").val();
+			var pwdrepeat = $("#repeatpwd").val();
+			
+			if(password!=pwdrepeat){
+				alert("两次输入的密码不同");
+				return;
+			}
+			var mail = $("#mail").val();
+			var re=/^\w+@[a-z0-9]+\.[a-z]+$/i;
+			if(!re.test(mail)){
+				alert("请填写正确的邮箱地址");
+				return;
+			}
+			var num = $("#checkinput").val();
+			$.ajax({
+			  type: 'POST',
+			  url: '/api/register',
+			  data:'usercode='+usercode+"&username="+username+"&password="+password+"&num="+num+"&checknum="+checknum+"&mail="+mail,
+			  async :false,
+			  success: function(result){
+			  	if(result=="success"){
+			  		alert("注册成功");
+			  		location.href="/login_p";
+			  	}else{
+			  		alert(result);
+			  	}
+			  }
+			});
+		});
+  	</script>
+  </body>
+</html>

@@ -1,0 +1,121 @@
+body,html,div,table,td,tr,img,span{
+	margin:0;
+	padding:0;
+}
+html,body{
+	height:100%;
+}
+table{
+	border-collapse:collapse;
+}
+
+.settingblock .btn_common,.settingblock .btn_cancel{
+	margin-left:10px;
+}
+.settingblock .btn_change{
+	margin-top:10px;
+}
+.settingblock{
+	text-align:center;
+}
+.settingblock p{
+	font-size: 36px;
+    padding-top:15px;
+}
+
+.settingtable{
+	margin:10px;
+	width:450px;
+}
+.settingtable td{
+	font-size: 14px;
+	border:1px solid #e5f6ff;
+	padding:12px 6px;
+	padding-left: 15px;
+	text-align: left;
+}
+.settingpwd{
+	display: inline-block;
+	width: 100px;
+}
+.settingedit img{
+	visibility: hidden;
+	width: 16px;
+	vertical-align: middle;
+}
+.settingedit:hover img{
+	visibility: visible;
+}
+.settingintroduce textarea{
+	width: 100%;
+}
+.settingdiv{
+	display:inline-block;
+	vertical-align:top;
+	background: rgba(255,255,255,0.3);
+    border-radius: 5px;
+    padding: 20px;
+}
+/*  ÐÞ¸ÄÍ·Ïñ¿Ø¼þ  */
+.cropperlayer{
+	width: 200px;
+	top:100px;
+	left:50%;
+	margin-left:-125px;
+	display: none;
+	position: absolute;
+	background-color: #749ddb;
+	padding: 20px 50px;
+	border-radius: 10px;
+    border: 2px solid #a50909;
+}
+.cropperblock{
+	width: 100%;
+}
+.nowimg{
+	width: 200px;
+	border-radius:50%;
+	
+}
+.showimg{
+	height: 300px;
+}
+.cropperlayer input{
+	margin-top: 10px;
+	width: 200px;
+	color: white;
+}
+.cropperlayer button{
+	height: 28px;
+	line-height: 28px;
+	margin-left:20px;
+	margin-top: 10px;
+}
+/* button style */
+.settingdiv button{
+	padding: 8px 20px;
+    border: none;
+    border-radius: 3px;
+    font-weight: bold;
+    font-size:16px;
+    cursor:pointer;
+    user-select: none;
+}
+.btn_common{
+    background: #e5b983;
+    color: #804901;
+}
+.btn_change{
+	background:#ffa6a6;
+	color:#670000;
+}
+.btn_change:hover{
+	
+}
+.btn_return{
+	position: absolute;
+    height: 48px;
+    right: 30%;
+    top: 50px;
+    cursor: pointer;
+}

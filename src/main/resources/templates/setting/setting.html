@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="utf-8">
+	<link rel="stylesheet" href="css/genshin_map_setting.css">
+	<link rel="stylesheet" type="text/css" href="css/cropper.min.css">
+	<script type="text/javascript" src="js/jquery-1.10.2.min.js"></script>
+	<script type="text/javascript" src="js/cropper.min.js"></script>
+	<script type="text/javascript" src="js/jquery.base64.js"></script>
+	<style type="text/css">
+		html,body{
+			height:100%;
+		}
+		body{
+			background:url("images/bg5.jpg") no-repeat;
+		}
+	</style>
+</head>
+<body>
+	<div class="settingblock">
+		<p>用户设置</p>
+		<img src="images/icons/return.png" class="btn_return" id="btn_return">
+		<div class="settingdiv">
+			<table class="settingtable">
+				<tr>
+					<td style="width:100px;">用户ID</td>
+					<td style="width:300px;" th:text="${userid}"></td>
+				</tr>
+				<tr>
+					<td>用户名</td>
+					<td id="usercode" th:text="${usercode}"></td>
+				</tr>
+				<tr>
+					<td>昵称</td>
+					<td class="settingusername" th:text="${username}" contenteditable="true"></td>
+				</tr>
+				<tr>
+					<td>用户组</td>
+					<td th:text="${manager}"></td>
+				</tr>
+				<tr>
+					<td>邮箱</td>
+					<td class="settingmail" th:text="${mail}" contenteditable="true"></td>
+				</tr>
+				<tr>
+					<td>自我介绍</td>
+					<td class="settingintroduce" th:text="${introduce}" contenteditable="true"></td>
+				</tr>
+			</table>
+			<div style="margin-top:20px;">
+				<button class="btn_common" id="update">确认提交</button>
+				<button class="btn_cancel" id="reset">重置</button>
+			</div>
+		</div>
+		
+		<div class="settingdiv" style="margin-left:50px;margin-top:40px;">
+			<img th:src="${imgurl}" id="nowimg" class="nowimg">
+			<br>
+			<button class="btn_change" id="settingchangeimg">修改头像</button>
+		</div>
+	</div>
+	<div class="cropperlayer">
+		<div class="cropperblock">
+			<img src="images/define_avatar.png" class="showimg" id="image">
+			<input type="file" value="upload" id="inputImage"><br>
+			<button id="settingconfirm" class="btn_common">确定</button>
+			<button id="settingcancel" class="btn_cancel">取消</button>
+		</div>
+	</div>
+	<img id="newimage">
+	<script type="text/javascript">
+
+		var $image = $("#image");
+		var options = {
+		    aspectRatio: 1,
+		    dragMode:'move',
+		    cropBoxResizable:false
+		  };
+		$image.cropper(options);
+
+		var cropper = $image.data("cropper");
+		var uploadedImageURL;
+		var $inputImage = $('#inputImage');
+		var changeflag = false;    //用来判断用户是否修改了图片
+
+		if (URL) {
+		    $inputImage.change(function () {
+		      var files = this.files;
+		      var file;
+
+		      if (files && files.length) {
+		        file = files[0];
+
+		        if (/^image\/\w+$/.test(file.type)) {
+		          uploadedImageName = file.name;
+		          uploadedImageType = file.type;
+
+		          if (uploadedImageURL) {
+		            URL.revokeObjectURL(uploadedImageURL);
+		          }
+
+		          uploadedImageURL = URL.createObjectURL(file);
+		          $image.cropper('destroy').attr('src', uploadedImageURL).cropper(options);
+		          $inputImage.val('');
+		        } else {
+		          window.alert('Please choose an image file.');
+		        }
+		      }
+		    });
+	  } else {
+	    $inputImage.prop('disabled', true).parent().addClass('disabled');
+	  }
+	//修改头像
+	$("#settingchangeimg").click(function(){
+		$(".cropperlayer").show();
+	});
+
+	$("#settingcancel").click(function(){
+		$(".cropperlayer").hide();
+	})
+
+	$("#settingconfirm").click(function(){
+		var msg = confirm("是否保存头像？")
+		if(msg){
+			var result = $image.cropper("getCroppedCanvas",{width:200,height:200});
+			var url = result.toDataURL("image/jpeg");		
+			var base64url = $.base64.btoa(url);
+			var usercode = $("#usercode").html();
+			console.log(base64url);
+			$.ajax({
+			  type: 'POST',
+			  url: '/api/saveimg',
+			  data:'image='+base64url+"&usercode="+usercode,
+			  async :false,
+			  success: function(result){
+			  	console.log(result);
+			  	if(result=="success"){
+			  	    alert("修改成功，登录后重新生效");
+			  	}else if(result=="error"){
+			  		alert("修改失败");
+			  	}
+			  }
+			})
+			$("#nowimg").attr("src",url);
+			$(".cropperlayer").hide();
+		}
+	})
+	
+	$("#update").click(function(){
+		var username = $(".settingusername").html();
+		var mail = $(".settingmail").html();
+		var introduce = $(".settingintroduce").html();
+		var msg = confirm("确认修改？")
+		if(msg){
+			$.ajax({
+			  type: 'POST',
+			  url: '/api/updatesetting',
+			  data:'username='+username+"&mail="+mail+"&introduce="+introduce,
+			  async :false,
+			  success: function(result){
+				  if(result=="success"){
+			  		alert("修改成功");
+			  	  }else if(result=="error"){
+			  		alert("修改失败");
+			  	  }
+			  }
+			});
+		}
+	});
+	
+	$("#reset").click(function(){
+		location.href = "/usersetting";
+	});
+	
+	$("#btn_return").click(function(){
+		location.href = "/index";
+	});
+	</script>
+</body>
+</html>

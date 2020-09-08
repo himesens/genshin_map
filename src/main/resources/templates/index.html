@@ -3,44 +3,36 @@
 <head>
 	<title>地图测试</title>
 	<meta charset="utf-8">
+	<link rel="stylesheet" href="css/genshin_map.css"/>
 	<link rel="stylesheet" href="css/leaflet.css"/>
 	<script type="text/javascript" src="js/leaflet.js"></script>
 	<script type="text/javascript" src="js/jquery-1.10.2.min.js"></script>
+	<script type="text/javascript" src="js/jquery.cookie.js"></script>
 	<style type="text/css">
-		html,body,div,span,table{
-			margin:0;
-			padding: 0;
+		.addicon_ul{
+		    width: 100%;
+		    margin: 0 20px;
+		    margin-top: 20px;
+		    height: 100px;
 		}
-		html,body{
-			height: 100%;
-			background: #333;
+		.addicon_ul li{
+			float:left;
+			width: 22%;
+    		padding: 5px 0;
 		}
-		body{
-			padding: 0 10px;
-			padding-bottom: 10px;
+		.addicon_ul img{
+			height:28px;
 		}
-		#mapid{
-			height: calc(100% - 120px);
+		.btn_reach{
+			color:#0066ff;
+			cursor:pointer;
 		}
-		.header{
-			height: 80px;
-			padding: 20px;
+		.btn_reached{
+			color:black;
+			cursor:pointer;
 		}
-		.title{
-			font-size:48px;
-			font-weight: bold;
-			font-family: Arial;
-			color:white;
-			height: 80px;
-		}
-		.title img{
-			height:80px;
-		}
-		.title span{
-			display: inline-block;
-			height: 80px;
-			line-height: 80px;
-			vertical-align: top;
+		.details{
+			margin:10px 20px;
 		}
 	</style>
 </head>
@@ -50,59 +42,306 @@
 			<img src="images/title.png">
 			<span>World Map</span>
 		</div>
+		<ul class="userblock">
+			<li>
+				<a th:href="${islogin}?'':'/login_p'" class="userunit">	
+					<img th:src="${islogin}?${avatarurl}:'images/define_avatar.png'">
+					<span id="auth" th:if="${islogin}" th:text="你好，+${username}"></span>
+					<span id="auth" th:unless="${islogin}">登录</span>
+					<span style="width:10px;display: inline-block;"></span>
+					<span class="showmore" th:if="${islogin}"></span>
+				</a>
+				<dl class="userblock_dl" th:if="${islogin}">
+		          <dd><a href="/usersetting">用户设置</a></dd>
+		          <dd><a href="/logout">退出登录</a></dd>
+		        </dl>
+			</li>
+		</ul>
 	</div>
 	<div id="mapid"></div>
+	<div class="sidebaricon" id="sidebaricon">-</div>
+	<div class="sidebar" id="sidebar">
+		<ul class="nav_tabs">
+			<li><a href="#" class="nav_link active" data-page="1">标记</a></li>
+			<li><a href="#" class="nav_link" data-page="2">关于</a></li>
+			<li><a href="#" class="nav_link" data-page="3">成为开发者</a></li>
+		</ul>
+		<div class="nav_page" data-id="1">
+			<div class="itemblock">
+				<div class="chooseitem choosed" id="choosewind">
+					<img  src="images/icons/marker_wind.png">
+					<span>65<small class="text-muted">x</small> Anemoculus </span>
+				</div>
+				<div class="chooseitem choosed" id="chooseearth">
+					<img  src="images/icons/marker_earth.png">
+					<span> 130 <small  class="text-muted">x</small> Geoculus </span>
+				</div>
+				<div class="chooseitem choosed" id="choosetele">
+					<img  src="images/icons/marker_teleport.png">
+					<span> 56 <small  class="text-muted">x</small> Teleport </span>
+				</div>
+				<div class="chooseitem">
+					<img  src="images/icons/marker_god.png">
+					<span> 8 <small  class="text-muted">x</small> StatueOfThe7 </span>
+				</div>
+				<div class="chooseitem">
+					<img  src="images/icons/marker_dungeon.png">
+					<span> 20 <small  class="text-muted">x</small> Challenge </span>
+				</div>
+				<div class="chooseitem">
+					<img  src="images/icons/marker_monster.png">
+					<span> 42 <small  class="text-muted">x</small> Boss/Enemy </span>
+				</div>
+				<div class="chooseitem">
+					<img  src="images/icons/marker_treasure.png">
+					<span> 300 <small  class="text-muted">x</small> Treasure </span>
+				</div>
+				<div class="chooseitem">
+					<img  src="images/icons/marker_shrine.png">
+					<span> 20 <small  class="text-muted">x</small> Shrine </span>
+				</div>
+				<div class="chooseitem" id="showalready" th:if="${islogin}" style="width:300px;margin: 0 auto;text-align: center;">
+					<div th:if="${showuser}" style="height: 36px;line-height: 36px;font-size: 18px;"><a href="/index?showuser">显示全部地点</a></div>
+					<div th:unless="${showuser}" style="height: 36px;line-height: 36px;font-size: 18px;"><a href="/index?showuser=1">隐藏用户已经访问的地点</a></div>
+				</div>
+				<!--<div class="chooseitem_small">
+					<img  src="images/marker-752.png">
+				</div>
+				<div class="chooseitem_small">
+					<img  src="images/marker-727.png">
+				</div>
+				<div class="chooseitem_small">
+					<img  src="images/marker-726.png">
+				</div>
+				<div class="chooseitem_small">
+					<img  src="images/marker-725.png">
+				</div>-->
+			</div>
+		</div>
+		<div class="nav_page" data-id="2" style="display: none;">
+			<div class="details">
+				Update V1.0 2020-09-08
+			</div>
+			<div class="details">By Himesens</div>
+		</div>
+		<div class="nav_page" data-id="3" style="display: none;">
+			<div th:if="${islogin}" style="text-align:center;">
+				<button th:unless="${isdevelop}" class="btn_tologin" id="tobedevelop">申请成为开发者</button><br>
+				<span th:unless="${isdevelop}" style="font-size: 12px;">试用开发者账户，公测后删去所有记录：账号testadmin密码123456</span>
+				<div th:if="${isdevelop}">
+					<span>您已经是开发者 ，可以进行相关操作</span>
+				</div>
+				<div th:if="${isdevelop}">
+					<ul class="addicon_ul" th:if="${isdevelop}">
+				        <li><input class="input_icon" type="radio" name="icon" value="1" checked="checked"><img  src="images/icons/marker_wind.png"></li>
+				        <li><input class="input_icon" type="radio" name="icon" value="2"><img  src="images/icons/marker_earth.png"></li>
+				        <li><input class="input_icon" type="radio" name="icon" value="3"><img  src="images/icons/marker_teleport.png"></li>
+				        <li><input class="input_icon" type="radio" name="icon" value="4"><img  src="images/icons/marker_god.png"></li>
+				        <li><input class="input_icon" type="radio" name="icon" value="5"><img  src="images/icons/marker_dungeon.png"></li>
+				    </ul>
+					<button class="btn_tologin" id="addicon">添加</button>
+				</div>
+			</div>
+			<div th:unless="${islogin}" style="text-align:center;margin-top:20px;">
+				<button class="btn_tologin" id="tologin">请先登录</button><br>
+				<span style="font-size: 12px;">试用开发者账户，公测后删去所有记录：账号testadmin密码123456</span>
+			</div>
+		</div>
+	</div>
 	<script type="text/javascript">
 		var mymap = L.map("mapid").setView([50,0],3);
-
-		var windIcon = L.icon({
-			iconUrl: 'images/icons/marker_wind.png',
-			iconSize: [28, 28], // size of the icon
-			iconAnchor: [14, 28]  // the point icon put
-		});
-		var earthIcon = L.icon({
-			iconUrl: 'images/icons/marker_earth.png',
-			iconSize: [28, 28], // size of the icon
-			iconAnchor: [14, 28]  // the point icon put
-		});
-
+		var winds;var earths;var teles;
+		var showuser = [[${showuser}]];
+		var islogin = [[${islogin}]];
+		var addiconmod = false;
+		var addicontype = "";
+		
 		L.tileLayer('images/{z}/map_{y}_{x}.webp', {
-		    attribution: '',
+		    attribution: 'Use Leaflet to make the map',
 		    minZoom: 2,
             maxZoom: 5,
             noWrap:true,
 		    crs: L.CRS.Simple
 		}).addTo(mymap);
 
-		//var wind1 = L.marker([50.5,30.5],{icon:aIcon}).addTo(mymap);
-		var wind1 = L.marker([50.5,30.5],{icon:windIcon}).bindPopup("风神忽悠着你");
-		//var wind2 = L.marker([47.5,28.5],{icon:windIcon}).bindPopup("风神忽悠着你");
-		//var wind3 = L.marker([48.5,35.5],{icon:windIcon}).bindPopup("风神忽悠着你");
-
-		var earth1 = L.marker([20.5,50.5],{icon:earthIcon}).bindPopup("啊啊啊啊");
-		var earth2 = L.marker([25.0,48.5],{icon:earthIcon}).bindPopup("啊啊啊啊");
-
-		var winds = L.layerGroup([wind1]);
-		var earths = L.layerGroup([earth1,earth2]);
-
-		winds.addTo(mymap);
-		earths.addTo(mymap);
-
-		var windlayer = {
-			
-		}
-		var earthlayer = {
-			"Earth":earths,
-			"Winds":winds
-		}
-		L.control.layers(windlayer,earthlayer).addTo(mymap);
-
-
 		mymap.on('click',function(e){
 			console.log(e.latlng);
+			if(addiconmod){
+				var isadd = confirm("确定添加标记点？");
+				if(isadd){
+					$.ajax({
+					  type: 'POST',
+					  url: '/api/addicon',
+					  data:'icontype='+addicontype+"&pointlat="+e.latlng.lat+"&pointlng="+e.latlng.lng,
+					  async :false,
+					  success: function(result){
+					  	if(result=="success"){
+					  		alert("登记点位成功！刷新页面后生效");
+					  	}else if(result=="error"){
+					  		alert("系统异常！");
+					  	}
+					  }
+					})
+				}
+				addiconmod = false;
+			}
+		});
+		
+		$(document).ready(function(){
+			$.ajax({
+			  type: 'POST',
+			  url: '/api/getpoints',
+			  data:'',
+			  async :false,
+			  success: function(result){
+			  	showIcon(result);
+			  }
+			})
 		});
 
+		$(".nav_link").click(function(){
+			var bool = $(this).hasClass("active");
+			console.log(bool);
+			if(!bool){
+				var id = $(this).attr("data-page");
+				$(".nav_link.active").removeClass("active");
+				$(this).addClass("active");
+				$(".nav_page").hide();
+				$(".nav_page[data-id='"+id+"']").show();
+			}
+		});
+		$("#sidebaricon").click(function(){
+			var nowstatus = $(this).html();
+			console.log(nowstatus);
+			if(nowstatus=="+"){
+				$(this).html("-");
+				$("#sidebar").show()
+			}else if(nowstatus=="-"){
+				$(this).html("+");
+				$("#sidebar").hide();
+			}
+		});
+		$("#addicon").click(function(){
+			addiconmod = true;
+			addicontype = $(".input_icon:radio:checked").val();
+			console.log(addicontype);
+			alert("请点击页面上地图区域完成标记点添加");
+		});
 		
+		
+		$("#choosewind").click(function(){
+			if(mymap.hasLayer(winds)){mymap.removeLayer(winds);$(this).removeClass("choosed");}else{mymap.addLayer(winds);$(this).addClass("choosed");}
+		});
+		$("#chooseearth").click(function(){
+			if(mymap.hasLayer(earths)){mymap.removeLayer(earths);$(this).removeClass("choosed");}else{mymap.addLayer(earths);$(this).addClass("choosed");}
+		});
+		$("#choosetele").click(function(){
+			if(mymap.hasLayer(teles)){mymap.removeLayer(teles);$(this).removeClass("choosed");}else{mymap.addLayer(teles);$(this).addClass("choosed");}
+		});
+		
+		$("#tobedevelop").click(function(){
+			$.ajax({
+			  type: 'POST',
+			  url: '/api/tobedevelop',
+			  data:'',
+			  async :false,
+			  success: function(result){
+			  	if(result=="success"){
+			  		alert("申请成功！申请结果将会在数日内通过登记邮件发送给您");
+			  	}else if(result=="error"){
+			  		alert("申请失败，请检查登录状态！");
+			  	}
+			  }
+			})
+		});
+		
+		$("#tologin").click(function(){
+			location.href="/login_p";
+		});
+		
+		function showIcon(result){
+			var alreadyfound = [];
+			if(islogin){
+				$.each(result.lsalready,function(idx,unit){
+					alreadyfound.push(unit.pointid);
+				});
+			}
+			console.log(alreadyfound);
+			var alreadygroup = [];
+			$.each(result.pointdata,function(idx,unit){
+				var Icon = L.icon({
+					iconUrl: unit.iconurl,
+					iconSize: [28, 28], // size of the icon
+					iconAnchor: [14, 28],  // the point icon put
+					popupAnchor:  [0, -28]
+				});
+				var layergroup = [];
+				
+				if(unit.layername=="winds" || unit.layername=="earths" || unit.layername=="teles"){
+					//只有这三个点位可以进行标记/修改，其它标记点都可以直接取全部值
+					$.each(unit.lsdata,function(iex,item){
+						var marker;
+						if(islogin){
+							if(showuser){
+								marker = L.marker([item.point_lat,item.point_lng],{icon:Icon}).bindPopup(item.tips_cn+"<br><span data-id='"+item.pointid+"' class='btn_reach'>我已访问过该点</span>");
+								if(!alreadyfound.includes(item.pointid)){
+									layergroup.push(marker);
+								}
+							}else{
+								if(alreadyfound.includes(item.pointid)){
+									marker = L.marker([item.point_lat,item.point_lng],{icon:Icon}).bindPopup(item.tips_cn+"<br><span data-id='"+item.pointid+"' class='btn_reached'>我已访问过该点</span>");
+								}else{
+									marker = L.marker([item.point_lat,item.point_lng],{icon:Icon}).bindPopup(item.tips_cn+"<br><span data-id='"+item.pointid+"' class='btn_reach'>我已访问过该点</span>");
+								}
+								layergroup.push(marker);
+							}
+							
+						}else{
+							marker = L.marker([item.point_lat,item.point_lng],{icon:Icon}).bindPopup(item.tips_cn);
+							layergroup.push(marker);
+						}
+
+					});
+				}else{
+					$.each(unit.lsdata,function(iex,item){
+						var marker = L.marker([item.point_lat,item.point_lng],{icon:Icon}).bindPopup(item.tips_cn);
+						layergroup.push(marker);
+					});
+				}
+				
+				switch(unit.layername){
+				case "winds":
+					winds = L.layerGroup(layergroup);
+					winds.addTo(mymap);
+					break;
+				case "earths":
+					earths = L.layerGroup(layergroup);
+					earths.addTo(mymap);
+					break;
+				case "teles":
+					teles = L.layerGroup(layergroup);
+					teles.addTo(mymap);
+					break;
+				}
+			});
+		}
+		
+		$("#mapid").on("click",".btn_reach",function(){
+			var pointid = $(this).attr("data-id");
+			//alert(pointid+",aaa");
+			$.ajax({
+			  type: 'POST',
+			  url: '/api/adduserpoint',
+			  data:'pointid='+pointid,
+			  async :false,
+			  success: function(result){
+			  	if(result=="success"){
+			  		alert("标记点位成功！");
+			  		window.location.reload();
+			  	}
+			  }
+			})
+		});
 	</script>
 </body>
 </html>

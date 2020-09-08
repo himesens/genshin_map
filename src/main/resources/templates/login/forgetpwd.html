@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>忘记密码</title>
+    <meta charset="utf-8">
+    <!--<link rel="icon" href="FPI.ico" type="image/x-icon" />-->
+    <link rel="stylesheet" type="text/css" href="css/genshin_map.css"/>
+    <script type="text/javascript" src="js/jquery-1.10.2.min.js"></script>
+	<style>
+	html,body,div,input,button{
+		margin:0;
+		padding:0;
+	}
+	body{
+		background:url("images/bg5.jpg") no-repeat;
+	}
+	</style>
+  </head>
+  <body>
+	<div class="loginblock">
+		<div class="logincontent">
+			<div class="loginline">
+				<input type="text" id="usercode" AUTOCOMPLETE="off" placeholder="请输入用户名..." name="myusername"> 
+			</div>
+			<div class="loginline">
+				<input type="text" id="mail" AUTOCOMPLETE="off" placeholder="请输入验证邮箱..." class="text_input">
+			</div>
+			<div class="loginline">
+				<input type="text" placeholder="请输入验证码..." class="checkinput" id="checkcode">
+				<input type="button" value="发送邮件" id="sendmail" class="btn_login" style="width:75px;font-size:14px;margin-left:0;vertical-align: bottom;">
+			</div>
+			<div class="loginline">
+				<input type="password" id="password" AUTOCOMPLETE="off" placeholder="请输入密码..." name="mypassword" class="text_input">
+			</div>
+			<div class="loginline">
+				<input type="password" id="repeatpwd" AUTOCOMPLETE="off" placeholder="请重复密码..." class="text_input">
+			</div>
+			<div class="loginline">
+				<input type="submit" value="重 置 密 码" class="btn_login" id="reset">
+			</div>
+			<div class="loginbottom">
+				<a class="regi" href="/login_p">返回</a>
+			</div>
+		</div>
+	</div>
+  	<script>
+		//发送验证邮件
+		$("#sendmail").click(function(){
+			var usercode = $("#usercode").val();
+			var mail = $("#mail").val();
+			$.ajax({
+			  type: 'POST',
+			  url: '/api/sendmail',
+			  data:'usercode='+usercode+"&mail="+mail,
+			  async :false,
+			  success: function(result){
+			  	alert(result);
+			  }
+			});
+		});
+		
+		$("#reset").click(function(){
+			var usercode = $("#usercode").val();
+			var checkcode = $("#checkcode").val();
+			if(usercode==""){
+				alert("请输入用户名");
+				return;
+			}
+			if(checkcode==""){
+				alert("请输入验证码");
+				return;
+			}
+			var password = $("#password").val();
+			var pwdrepeat = $("#repeatpwd").val();
+			if(password!=pwdrepeat){
+				alert("两次输入的密码不同");
+				return;
+			}
+			$.ajax({
+			  type: 'POST',
+			  url: '/api/resetpwd',
+			  data:'usercode='+usercode+"&newpassword="+password+"&checkcode="+checkcode,
+			  async :false,
+			  success: function(result){
+			  	alert(result);
+			  	location.href="/login_p";
+			  }
+			});
+		});
+  	</script>
+  </body>
+</html>

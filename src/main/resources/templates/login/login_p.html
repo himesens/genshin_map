@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>旅行者登录</title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" type="text/css" href="css/genshin_map.css"/>
+    <script type="text/javascript" src="js/jquery-1.10.2.min.js"></script>
+	<style>
+	html,body,div,input,a{
+		padding:0;
+		margin:0;
+	}
+	body{
+		background:url("images/bg5.jpg") no-repeat;
+	}
+	</style>
+  </head>
+  <body>
+	<div class="loginblock">
+		<div class="logincontent">
+			<div class="loginline">
+				<input type="text" id="user" AUTOCOMPLETE="off" placeholder="请输入用户名..." name="username"> 
+			</div>
+			<div class="loginline">
+				<input type="password" id="pwd" AUTOCOMPLETE="off" placeholder="请输入密码..." name="password" class="text_input">
+			</div>
+			<div class="loginline">
+				<input type="submit" value="登   录" class="btn_login" id="btn_login">
+				<div class="loginalarm" th:if="${#httpServletRequest.queryString} eq 'error'">登录出错</div>
+			</div>
+			<div class="loginbottom">
+				<a id="forget" class="regi" href="/forgetpwd">忘记密码</a>
+				<a id="regi" class="regi" href="/register">旅行者登记</a>
+			</div>
+		</div>
+	</div>
+	<script type="text/javascript">
+		$("#btn_login").click(function(){
+			var usercode = $("#user").val();
+			var password = $("#pwd").val();
+			if(usercode=="" || password==""){
+				alert("请填写完整后登录");
+			}else{
+				location.href="/login?usercode="+usercode+"&password="+password;
+			}
+		});
+	
+	</script>
+  </body>
+</html>
